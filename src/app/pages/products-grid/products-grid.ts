@@ -35,7 +35,7 @@ TitleCasePipe
     [routerLink]="['/products',cat]">
     <span matListItemTitle class="font-medium" 
     [class]="cat===category() ? '!text-white':null">
-      {{cat | titlecase }}.  
+      {{cat | titlecase }}  
     </span>
 
   </mat-list-item>
@@ -74,7 +74,11 @@ export default class ProductsGrid {
   store = inject(EcommerceStore);
 
  
-  categories=signal<string[]>(['all', 'electronics', 'clothing', 'accessories', 'home'])
+  categories=signal<string[]>(['all', 'electronics', 'clothing', 'accessories', 'home']);
+
+  constructor() {
+    this.store.setCategory(this.category);
+  }
 }
      
 
