@@ -5,8 +5,11 @@ import {Header} from "./layout/header/header";
   selector: 'app-root',
   imports: [RouterOutlet, Header],
   template: `
-   <app-header/>
+   <app-header class=" z-10 relative"/>
+
+   <div class="h-[calc(100%-64px)] overflow-auto">
     <router-outlet />
+</div>
   `,
   styles: [],
 })

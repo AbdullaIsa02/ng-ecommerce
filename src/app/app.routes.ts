@@ -9,7 +9,7 @@ export const routes: Routes = [
     },
     {
 
-    path: 'products/: category',
+    path: 'products/:category',
     loadComponent: () => import('./pages/products-grid/products-grid')
      },
     {
