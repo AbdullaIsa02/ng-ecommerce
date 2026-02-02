@@ -162,11 +162,12 @@ export const EcommerceStore = signalStore(
 category: 'all',  
 wishlistItems:[]
     } as EcommerceState),
-    withComputed(({ category,products  }) => ({
+    withComputed(({ category,products, wishlistItems  }) => ({
 filteredProducts: computed(() => {
     if (category() === 'all') return products();
       return products().filter((p)=> p.category ===category().toLowerCase());
 }),
+wishlistCount: computed(() => wishlistItems().length),
     })),
     withMethods((store, toaster = inject (Toaster)) => ({
       setCategory: signalMethod<string>((category: string) => {
@@ -174,13 +175,18 @@ filteredProducts: computed(() => {
       }),
       addToWishlist: (product:Product) => {
        const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
-        if (draft.find(p => p.id === product.id)) {
+        if (!draft.find(p => p.id === product.id)) {
           draft.push(product);
         }
       });
       patchState(store, { wishlistItems: updatedWishlistItems });
       toaster.success("Product added to wishlist");
-    }
-      
+    },
+    removeFromWishlist: (product: Product)=>{
+patchState(store,{
+  wishlistItems: store.wishlistItems().filter(p => p.id !== product.id),
+});
+toaster.success("Product removed from wishlist");
+    },  
     }))
 );
