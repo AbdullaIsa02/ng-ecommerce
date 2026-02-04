@@ -8,9 +8,14 @@ import { MatIconButton } from '@angular/material/button';
   selector: 'app-toggle-wishlist-button',
   imports: [MatIconButton,MatIcon],
   template: `
-    <button mat-icon-button (click)="toggleWishlist(product())">
-      <mat-icon>{{ isInWishlist() ? 'favorite' : 'favorite_border' }}</mat-icon>
-    </button>
+   <button 
+           class="!bg-white border-0 shadow-md flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 hover:ahadow-lg"
+          [class]="isInWishlist() ? '!text-red-500' : '!text-gray-400'"
+           matIconButton
+          (click)="toggleWishlist(product())"
+           >
+           <mat-icon>{{isInWishlist() ? 'favorite' : 'favorite_border'}}</mat-icon>
+          </button>
   `,
   styles: ``,
 })
