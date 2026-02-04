@@ -58,8 +58,7 @@ product = input.required<Product>();
   toggleWishlist(product: Product) {
 if(this.isInWishlist()){
 this.store.removeFromWishlist(product);
-} else{
-
+}else{
   this.store.addToWishlist(product);
 }
   }

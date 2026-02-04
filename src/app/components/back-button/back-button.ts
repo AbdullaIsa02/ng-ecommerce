@@ -8,16 +8,14 @@ import { MatIcon } from "@angular/material/icon";
   template: `
    <button matButton="text"[routerLink]="navigateTo() ?? null" class="flex Items-center gap-1">
     <mat-icon>arrow_back</mat-icon>
-    {{label()}}
-
-   </button>
+  <ng-content/>
+ </button>
 
   `,
   styles: `
     :host{
 display: block;
 
-    }
     }
   `
 })

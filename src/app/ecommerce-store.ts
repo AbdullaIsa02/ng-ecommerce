@@ -187,6 +187,6 @@ patchState(store,{
   wishlistItems: store.wishlistItems().filter(p => p.id !== product.id),
 });
 toaster.success("Product removed from wishlist");
-    },  
-    }))
+    }, 
+    })),
 );
