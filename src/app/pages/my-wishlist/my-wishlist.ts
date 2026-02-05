@@ -4,10 +4,11 @@ import { ProductCard } from "../../components/product-card/product-card";
 import { BackButton } from "../../components/back-button/back-button";
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
+import { EmptyWishlist } from "./empty-wishlist/empty-wishlist";
 
 @Component({
     selector: 'app-my-wishlist',
-    imports: [ProductCard, BackButton,MatIcon,MatIconButton],
+    imports: [ProductCard, BackButton, MatIcon, MatIconButton, EmptyWishlist],
     template: `
     <div class="mx-auto max-w-[1200px] py-6 px-4">
     <app-back-button class="mb-6" navigateTo="/products/all">Continue Shopping </app-back-button>
@@ -29,11 +30,23 @@ import { MatIconButton } from '@angular/material/button';
            >
            <mat-icon>delete</mat-icon>
           </button>
-
-                </app-product-card>
+         </app-product-card>
             }
         </div>
-    }@else{}
+
+<div class="mt-8 flex justify-center">
+    <button
+  class="border border-red-400 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition"
+  (click)="store.clearWishlist()"
+>
+  Clear Wishlist
+</button>
+
+</div>
+
+    }@else{
+        <app-empty-wishlist/>
+    }
     </div>
     `,
     styles:``,
@@ -42,3 +55,4 @@ export default class MyWishlist{
     store=inject(EcommerceStore)
 }
     
+

@@ -188,5 +188,8 @@ patchState(store,{
 });
 toaster.success("Product removed from wishlist");
     }, 
+    clearWishlist: () => {
+      patchState(store, {wishlistItems:[]});
+    },
     })),
 );
