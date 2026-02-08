@@ -15,9 +15,7 @@ export type EcommerceState =
 };
 
 export const EcommerceStore = signalStore(
-    {
-        providedIn: 'root'
-    },
+    { providedIn: 'root' },
     withState({
         products:[
          // Electronics
@@ -208,9 +206,9 @@ toaster.success("Product removed from wishlist");
           })
           });
 
-          patchState(store, { cartItems: updatedCartItems })
-          toaster.success(existingItemIndex !== -1 ? 'Product added again' : 'Product added to the cart')
-        }
-      }))
+              patchState(store, { cartItems: updatedCartItems })
+              toaster.success(existingItemIndex !== -1 ? 'Product added again' : 'Product added to the cart')
+            }
+        }))
     );
    
