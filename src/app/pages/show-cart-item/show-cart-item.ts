@@ -1,9 +1,10 @@
 import { Component, input } from '@angular/core';
 import { CartItem } from '../../models/cart';
+import { QtySelector } from "../../components/qty-selector/qty-selector";
 
 @Component({
   selector: 'app-show-cart-item',
-  imports: [],
+  imports: [QtySelector],
   template: `
     <div class="grid grid-cols-3 grid-cols-[3fr_1fr_1fr] ">
       <div class="flex items-center gap-4">
@@ -13,7 +14,10 @@ import { CartItem } from '../../models/cart';
       <div class="text-gray-600 text-lg">\${{ item().product.price }}</div>
 </div>
   </div>
+  <app-qty-selector />
   </div>
+
+
   `,
   styles: ``,
 })
