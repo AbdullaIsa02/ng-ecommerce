@@ -1,10 +1,15 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, inject, input, Signal, Type } from '@angular/core';
 import { CartItem } from '../../models/cart';
 import { QtySelector } from "../../components/qty-selector/qty-selector";
+import { EcommerceStore } from '../../ecommerce-store';
+import { SignalMethod, StateSource } from '@ngrx/signals';
+import { Product } from '../../models/product';
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-show-cart-item',
-  imports: [QtySelector],
+  imports: [QtySelector, MatButtonModule, MatIconModule],
   template: `
     <div class="grid grid-cols-3 grid-cols-[3fr_1fr_1fr] ">
       <div class="flex items-center gap-4">
@@ -14,13 +19,30 @@ import { QtySelector } from "../../components/qty-selector/qty-selector";
       <div class="text-gray-600 text-lg">\${{ item().product.price }}</div>
 </div>
   </div>
-  <app-qty-selector />
-  </div>
+  <app-qty-selector [quantity]="item().quantity" />
 
+    <div class="flex flex-col items-end">
+<div class="text-right font-semibold text-lg">
+  {{total()}}
+  </div>
+  <div class="flex -me-3">
+   <button matIconButton>
+    <mat-icon>favorite_border</mat-icon>
+ </button>
+ <button matIconButton class="danger">
+    <mat-icon>delete</mat-icon>
+ </button>
+</div>
+ 
+</div>
+
+ </div>
 
   `,
   styles: ``,
 })
 export class ShowCartItem {
 item = input.required<CartItem>();
+store=inject(EcommerceStore);
+total=computed(() => (this.item().product.price * this.item().quantity).toFixed(2))
 }
