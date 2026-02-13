@@ -15,11 +15,11 @@ import { MatIconModule } from "@angular/material/icon";
       <div class="flex items-center gap-4">
         <img [src]="item().product.imageUrl" class="w-24 h-24 rounded-lg object-cover" />
 <div>
-      <div class="text-gray-900 text-lg font-semibold">{{ item().product.name }}</div>
+      <div class="text-gray-900/' text-lg font-semibold">{{ item().product.name }}</div>
       <div class="text-gray-600 text-lg">\${{ item().product.price }}</div>
 </div>
   </div>
-  <app-qty-selector [quantity]="item().quantity" />
+  <app-qty-selector [quantity]="item().quantity" (qtyUpdated)="store.setItemQuantity({productId: item().product.id, quantity: $event})"/>
 
     <div class="flex flex-col items-end">
 <div class="text-right font-semibold text-lg">
