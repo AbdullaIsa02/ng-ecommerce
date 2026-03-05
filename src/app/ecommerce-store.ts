@@ -4,7 +4,8 @@ import {  patchState, signalMethod, signalStore, withComputed, withMethods, with
 import {produce} from 'immer'
 import { Toaster } from './servises/toaster';
 import { CartItem } from './models/cart';
-
+import { MatDialog } from '@angular/material/dialog';
+import { SignInDialog } from './components/sign-in-dialog/sign-in-dialog';
 
 export type EcommerceState = 
 {
@@ -171,7 +172,7 @@ filteredProducts: computed(() => {
 wishlistCount: computed(() => wishlistItems().length),
 cartCount: computed(() => cartItems().reduce((acc, item) => acc + item.quantity, 0)),
     })),
-    withMethods((store, toaster = inject (Toaster)) => ({
+    withMethods((store, toaster = inject (Toaster),dialog = inject (MatDialog)) => ({
       setCategory: signalMethod<string>((category: string) => {
         patchState(store, { category });
       }),
@@ -237,8 +238,15 @@ const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
 patchState(store, { cartItems: updatedCartItems, wishlistItems: updatedWishlistItems })
 },
 removeFromCart: (product: Product) => {
-  patchState(store, {cartItems: store.cartItems().filter(p=> p.product.id !== product.id),
+  patchState(store, {
+    cartItems: store.cartItems().filter(p=> p.product.id !== product.id),
   });
 },
+
+proceedToCheckout: () => {
+dialog.open(SignInDialog, {
+  disableClose: true,
+})
+}
     }))
   );

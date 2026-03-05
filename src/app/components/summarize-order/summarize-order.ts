@@ -5,7 +5,7 @@ import { EcommerceStore } from '../../ecommerce-store';
   selector: 'app-summarize-order',
   imports: [],
   template: `
-    <div appViewPanel>
+    <div appViewPanel class="bg-white p-6 rounded-xl shadow-sm w-full max-w-sm">
       <h2 class="text-2xl font-bold mb-4">Order Summary</h2>
       <div class="space-y-3 text-lg pt-4 border-t">
         <div class="flex justify-between">
@@ -21,6 +21,9 @@ import { EcommerceStore } from '../../ecommerce-store';
           <span>\${{total()}}</span>
       </div>
 </div>
+
+<ng-content select="[actionButtons]"/>
+  </div>
   `,
   styles: ``,
 })
