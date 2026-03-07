@@ -41,14 +41,18 @@ import { MatInput } from "@angular/material/input";
 (click)="passwordVisible.set(!passwordVisible())"
 >
 <mat-icon>{{ passwordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
-></button>
+</button>
 </mat-form-field>
-<button type="submit" matButton="filled" class="w-full">Sign In </button>
+<button type="submit" matButton="filled" class="w-full"  >Sign In </button>
 </form>
   </div>
+ 
 
-  
-  styles:`,
+
+
+
+ `,
+  styles: ``,
 })
 export class SignInDialog {
 togglePasswordVisibility() {
