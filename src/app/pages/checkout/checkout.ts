@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BackButton } from "../../components/back-button/back-button";
 import { ShippingForm } from "./shipping-form/shipping-form";
 import { SummarizeOrder } from "../../components/summarize-order/summarize-order";
 import { PaymentFormComponent } from "./payment-form/payment-form";
+import { EcommerceStore } from '../../ecommerce-store';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-checkout',
   standalone: true, // ← обязательно
-  imports: [BackButton, ShippingForm, SummarizeOrder, PaymentFormComponent],
+  imports: [BackButton, ShippingForm, SummarizeOrder, PaymentFormComponent,MatButton],
   template: `
   <div class="mx-auto max-w-[1200px] py-6">
     <app-back-button class="mb-4" navigateTo="/cart">Back to Cart</app-back-button>
@@ -22,9 +24,18 @@ import { PaymentFormComponent } from "./payment-form/payment-form";
       </div>
 
       <div class="lg:col-span-2">
-        <app-summarize-order><ng-container actionButtons>
-          <button matButton="filled" class="w-full mt-6 py-3"(click)="store.proceedToCheckout()">Place Order</button>
-          </ng-container></app-summarize-order>
+        <app-summarize-order>
+ <ng-container actionButtons>
+          <button
+            matButton="filled"
+            class="w-full mt-6 py-3"
+            [disabled]="store.loading()"
+            (click)="store.placeOrder()"
+            >
+            {{ store.loading() ? 'Processing...' : 'Place Order' }}
+          </button>
+ </ng-container>
+</app-summarize-order>
       </div>
 
     </div>
@@ -32,5 +43,5 @@ import { PaymentFormComponent } from "./payment-form/payment-form";
   `,
 })
 export default class Checkout {
-store: any;
+store=inject(EcommerceStore);
 }

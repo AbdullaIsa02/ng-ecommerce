@@ -1,12 +1,18 @@
 import { Component, computed, inject } from '@angular/core';
 import { EcommerceStore } from '../../ecommerce-store';
+import { ViewPanel } from '../../directives/view-panel';
 
 @Component({
   selector: 'app-summarize-order',
-  imports: [],
+  imports: [ViewPanel],
   template: `
-    <div appViewPanel class="bg-white p-6 rounded-xl shadow-sm w-full max-w-sm">
+    <div appViewPanel>
       <h2 class="text-2xl font-bold mb-4">Order Summary</h2>
+
+<div class="space-y-2 pb-4">
+  <ng-content select="[checkoutItems]"/>
+</div>
+
       <div class="space-y-3 text-lg pt-4 border-t">
         <div class="flex justify-between">
           <span>Subtotal</span>
