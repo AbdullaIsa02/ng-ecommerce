@@ -3,15 +3,17 @@ import { Product } from '../../models/product';
 import { MatButton,  } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { EcommerceStore } from '../../ecommerce-store';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-card',
   standalone: true,
   imports: [MatButton, MatIcon, ],
   template: `
-    <div class="relative bg-white cursor-pointer rounded-xl shadow-lg overflow-hidden flex flex-col h-full">
-      
+   <div 
+  class="relative bg-white cursor-pointer rounded-xl shadow-lg overflow-hidden flex flex-col h-full"
+  (click)="openProduct()"
+>
       <img [src]="product().imageUrl"
            class="w-full h-[300px] object-cover rounded-t-xl" />
 
@@ -35,7 +37,7 @@ import { EcommerceStore } from '../../ecommerce-store';
           <span class="text-2xl font-bold text-gray-900">\${{ product().price }}</span>
         <button 
          matButton="filled"
-         (click)="store.addToCart(product())"
+         (click)="addToCart($event)"
         
      >
        
@@ -50,7 +52,18 @@ import { EcommerceStore } from '../../ecommerce-store';
   styles: ``,
 })
 export class ProductCard {
-product = input.required<Product>();
-store = inject(EcommerceStore);
- 
-} 
+  product = input.required<Product>();
+
+  store = inject(EcommerceStore);
+  router = inject(Router);
+
+  // 👇 ВСТАВЛЯЕШЬ СЮДА
+  openProduct() {
+    this.router.navigate(['/product', this.product().id]);
+  }
+
+  addToCart(event: Event) {
+    event.stopPropagation();
+    this.store.addToCart(this.product());
+  }
+}
