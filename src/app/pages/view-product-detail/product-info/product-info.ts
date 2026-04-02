@@ -18,7 +18,7 @@ import { MatIcon } from "@angular/material/icon";
     </div>
     <h1 class="text-2xl font-extrabold mb-4">{{ product().name }}</h1>
     <p class="text-3xl font-bold mb-4">\${{ product().price }}</p>
-    <app-stock-status [inStock]="product().inStock" />
+    <app-stock-status class="mb-4" [inStock]="product().inStock" />
     <p class="font-semibold mb-2">Description</p>
     <p class="text-gray-600 border-gray-200 pb-4">
       {{ product().description }}
@@ -46,7 +46,20 @@ class="w-2/3 flex items-center gap-2"
     <mat-icon>share</mat-icon>
   </button>
 </div>
-
+<div class="pt-6 flex flex-col gap-2 text-gray-700 text-xs">
+  <div class="flex items-center gap-3">
+    <mat-icon class="small">local_shipping</mat-icon>
+    <span>Free shipping on orders over $50</span>
+  </div>
+<div class="flex items-center gap-3">
+    <mat-icon class="mall">autorenew</mat-icon>
+    <span>30-day return policy</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <mat-icon class="mall">shield</mat-icon>
+    <span>2-year warranty included</span>
+  </div>
+  </div>
   `,
 styles:``,
 })

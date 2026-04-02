@@ -22,6 +22,7 @@ import { ProductInfo } from './product-info/product-info';
           <img 
             [src]="product.imageUrl" 
             class="w-[500px] h-[500px] object-cover rounded-lg" 
+            [style.view-transition-name]="'product-image-' + product.id"
           />
           <div class="flex-1">
             <app-product-info [product]="product" />
