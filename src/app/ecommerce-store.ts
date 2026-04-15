@@ -372,10 +372,11 @@ export const EcommerceStore = signalStore(
     selectedProductId: undefined,
     writeReview: false,
   } as EcommerceState),
-  withStorageSync({
-    key: 'modern-store',
-    select: ({ wishlistItems, cartItems, user }) => ({ wishlistItems, cartItems, user }),
-  }),
+   // TEMP: отключено из-за SSR (localStorage is not defined)
+  // withStorageSync({
+  //   key: 'modern-store',
+  //   select: ({ wishlistItems, cartItems, user }) => ({ wishlistItems, cartItems, user }),
+  // }),
   withComputed(({ category, products, wishlistItems, cartItems, selectedProductId }) => ({
     filteredProducts: computed(() => {
       if (category() === 'all') return products();
