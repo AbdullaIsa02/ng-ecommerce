@@ -1,28 +1,78 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
-import { HeaderActions } from '../header-actions/header-actions';
 import { RouterLink } from '@angular/router';
+import { EcommerceStore } from '../../ecommerce-store';
+import { HeaderActions } from '../header-actions/header-actions';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatToolbar, HeaderActions, RouterLink],
+  imports: [MatToolbar, HeaderActions, RouterLink, NgIf],
   template: `
     <mat-toolbar class="w-full elevated py-2">
-      <div class="max-w-[1200] mx-auto w-full">
-        <a routerLink="/products/all" class="logo">Crocus Trade</a>
+      <div class="max-w-[1200px] mx-auto w-full flex items-center gap-4">
+
+        <!-- LOGO -->
+        <a
+          routerLink="/products/all"
+          class="logo"
+          (click)="store.resetFilters()"
+        >
+          Crocus Trade
+        </a>
+
+        <!-- SEARCH -->
+        <div class="flex-1 relative">
+
+          <input
+            type="text"
+            placeholder="Search products..."
+            class="w-full px-3 py-2 border rounded-lg pr-10"
+            [value]="store.search()"
+            (input)="onSearch($event)"
+          />
+
+          <!-- ❌ CLEAR BUTTON -->
+          <button
+            *ngIf="store.search()"
+            type="button"
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+            (click)="clearSearch()"
+          >
+            ✕
+          </button>
+
+        </div>
+
+        <!-- CART + WISHLIST -->
+        <div class="flex gap-4 text-sm">
+          🛒 {{ store.cartCount() }}
+          ❤️ {{ store.wishlistCount() }}
+        </div>
+
+        <app-header-actions />
       </div>
-      <app-header-actions />
     </mat-toolbar>
   `,
   styles: [`
     .logo {
-      text-decoration: none;
-      color: inherit;
       font-weight: bold;
       font-size: 20px;
-      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
     }
-  `],
+  `]
 })
-export class Header {}
+export class Header {
+  store = inject(EcommerceStore);
+
+  onSearch(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.store.setSearch(value);
+  }
+
+  clearSearch() {
+    this.store.setSearch('');
+  }
+}

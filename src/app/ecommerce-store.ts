@@ -21,6 +21,8 @@ import { AddReviewParams, UserReview } from './models/user-review';
 export type EcommerceState = {
   products: Product[];
   category: string;
+search: string;
+
   wishlistItems: Product[];
   cartItems: CartItem[];
   user: User | undefined;
@@ -365,7 +367,11 @@ export const EcommerceStore = signalStore(
       },
     ],
     category: 'all',
-    wishlistItems: [],
+
+  // 🔍 ВОТ СЮДА
+  search: '',
+
+  wishlistItems: [],
     cartItems: [],
     user: undefined,
     loading: false,
@@ -377,20 +383,53 @@ export const EcommerceStore = signalStore(
   //   key: 'modern-store',
   //   select: ({ wishlistItems, cartItems, user }) => ({ wishlistItems, cartItems, user }),
   // }),
-  withComputed(({ category, products, wishlistItems, cartItems, selectedProductId }) => ({
-    filteredProducts: computed(() => {
-      if (category() === 'all') return products();
-      return products().filter((p) => p.category === category().toLowerCase());
-    }),
-    wishlistCount: computed(() => wishlistItems().length),
-    cartCount: computed(() => cartItems().reduce((acc, item) => acc + item.quantity, 0)),
-    selectedProduct: computed(() => products().find((p) => p.id === selectedProductId())),
-  })),
+withComputed(({ category, products, wishlistItems, cartItems, selectedProductId, search }) => ({
+  filteredProducts: computed(() => {
+
+    const term = (search() || '').toLowerCase().trim();
+
+    return products().filter((p) => {
+
+      const matchesCategory =
+        category() === 'all' || p.category === category().toLowerCase();
+
+      const matchesSearch =
+        !term ||
+        `${p.name} ${p.description} ${p.category}`
+          .toLowerCase()
+          .includes(term);
+
+      return matchesCategory && matchesSearch;
+    });
+
+  }),
+
+  wishlistCount: computed(() => wishlistItems().length),
+
+  cartCount: computed(() =>
+    cartItems().reduce((acc, item) => acc + item.quantity, 0)
+  ),
+
+  selectedProduct: computed(() =>
+    products().find((p) => p.id === selectedProductId())
+  ),
+})),
   withMethods(
     (store, toaster = inject(Toaster), matDialog = inject(MatDialog), router = inject(Router)) => ({
       setCategory: signalMethod<string>((category: string) => {
         patchState(store, { category });
       }),
+   resetFilters: () => {
+  patchState(store, {
+    search: '',
+    category: 'all',
+    selectedProductId: undefined,
+  });
+},
+setSearch: signalMethod<string>((value: string) => {
+  patchState(store, { search: value });
+}),
+      
       setProductId: signalMethod<string>((productId: string) => {
         patchState(store, { selectedProductId: productId });
       }),
