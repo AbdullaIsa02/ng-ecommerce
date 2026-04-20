@@ -25,26 +25,26 @@ import { ToggleWishlistButton } from '../../components/toggle-wishlist-button/to
 
   template: `
     <mat-sidenav-container>
-      <mat-sidenav mode="side" [opened]="true">
+   <mat-sidenav mode="side" [opened]="store.categoriesOpen()">
         <div class="p-6">
           <h2 class="text-lg text-gray-900">Categories</h2>
 
           <mat-nav-list>
-            @for (cat of categories(); track cat) {
-              <mat-list-item
-                [activated]="cat === category()"
-                class="my-2"
-                [routerLink]="['/products', cat]"
-              >
-                <span
-                  matListItemTitle
-                  class="font-medium"
-                  [class]="cat === category() ? '!text-white' : null"
-                >
-                  {{ cat | titlecase }}
-                </span>
-              </mat-list-item>
-            }
+           @for (cat of categories; track cat.value) {
+  <mat-list-item
+    [activated]="cat.value === category()"
+    class="my-2"
+    [routerLink]="['/products', cat.value]"
+  >
+    <span
+      matListItemTitle
+      class="font-medium"
+      [class]="cat.value === category() ? '!text-white' : null"
+    >
+      {{ cat.label }}
+    </span>
+  </mat-list-item>
+}
           </mat-nav-list>
         </div>
       </mat-sidenav>
@@ -77,7 +77,14 @@ export default class ProductsGrid {
 
   store = inject(EcommerceStore);
 
-  categories = signal<string[]>(['all', 'electronics', 'clothing', 'accessories', 'home']);
+  categories = [
+  { value: 'all', label: 'All Products' },
+  { value: 'automation', label: 'Automation' },
+  { value: 'drives', label: 'Drives' },
+  { value: 'pumps', label: 'Pumps' },
+  { value: 'valves', label: 'Valves' },
+  { value: 'heat-exchangers', label: 'Heat Exchangers' }
+];
 
   constructor() {
     this.store.setCategory(this.category);

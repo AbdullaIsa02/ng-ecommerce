@@ -21,6 +21,12 @@ import { NgIf } from '@angular/common';
         >
           Crocus Trade
         </a>
+        <button
+  class="px-3 py-1 border rounded"
+  (click)="store.toggleCategories()"
+>
+  ☰ 
+</button>
 
         <!-- SEARCH -->
         <div class="flex-1 relative">
@@ -47,8 +53,7 @@ import { NgIf } from '@angular/common';
 
         <!-- CART + WISHLIST -->
         <div class="flex gap-4 text-sm">
-          🛒 {{ store.cartCount() }}
-          ❤️ {{ store.wishlistCount() }}
+         
         </div>
 
         <app-header-actions />
