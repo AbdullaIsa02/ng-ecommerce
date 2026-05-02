@@ -42,6 +42,7 @@ export default class ViewProductDetail {
   constructor() {
     effect(() => {
       this.store.setProductId(this.productId());
+      this.store.setProductSeoTags(this.store.selectedProduct());
     });
   }
 

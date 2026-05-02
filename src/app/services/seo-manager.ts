@@ -1,0 +1,85 @@
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { REQUEST } from '@angular/core';
+
+import { SeoData } from '../models/seo-data';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SeoManager {
+  private title = inject(Title);
+  private meta = inject(Meta);
+  private router = inject(Router);
+
+  private platformId = inject(PLATFORM_ID);
+  private document = inject(DOCUMENT);
+
+  private request = inject(REQUEST, { optional: true });
+
+  private readonly siteName = 'Crocus Trade';
+  private readonly defaultImage =
+    'https://img01.flagma-tm.com/photo/zakupki-i-soprovozhdenie-sdelok-v-es-ot-imeni-vashey-kompanii-1760331_medium.jpg';
+
+  updateSeoTags(seoData: SeoData) {
+    const title = seoData.title || this.siteName;
+    const description = seoData.description || '';
+
+    // ✅ Title + description (SSR-safe)
+    this.title.setTitle(`${title} | ${this.siteName}`);
+    this.meta.updateTag({ name: 'description', content: description });
+
+    // 🌐 Определяем origin (SSR + browser)
+    let origin = '';
+
+    if (this.request) {
+      const headers = this.request.headers as Headers | undefined;
+
+      const protocol =
+        (headers?.get('x-forwarded-proto') ||
+          this.request.url.split(':')[0] ||
+          'http') + '://';
+
+      const host =
+        headers?.get('x-forwarded-host') ||
+        headers?.get('host') ||
+        '';
+
+      origin = host ? `${protocol}${host}` : '';
+    } else if (isPlatformBrowser(this.platformId)) {
+      origin = window.location.origin;
+    }
+
+    const fullUrl = origin + (this.router.url || '');
+
+    // 🔗 Canonical (только в браузере!)
+    if (isPlatformBrowser(this.platformId)) {
+      let canonicalLink = this.document.querySelector(
+        "link[rel='canonical']"
+      ) as HTMLLinkElement | null;
+
+      if (!canonicalLink) {
+        canonicalLink = this.document.createElement('link');
+        canonicalLink.setAttribute('rel', 'canonical');
+        this.document.head.appendChild(canonicalLink);
+      }
+
+      canonicalLink.setAttribute('href', fullUrl);
+    }
+
+    // 🖼 OpenGraph
+    const imageUrl = seoData.image || this.defaultImage;
+
+    this.meta.updateTag({ property: 'og:type', content: seoData.type || 'website' });
+    this.meta.updateTag({ property: 'og:site_name', content: this.siteName });
+    this.meta.updateTag({ property: 'og:title', content: title });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:url', content: fullUrl });
+    this.meta.updateTag({ property: 'og:image', content: imageUrl });
+    this.meta.updateTag({ property: 'og:image:width', content: '1200' });
+    this.meta.updateTag({ property: 'og:image:height', content: '630' });
+    this.meta.updateTag({ property: 'og:locale', content: 'en_US' });
+  }
+}

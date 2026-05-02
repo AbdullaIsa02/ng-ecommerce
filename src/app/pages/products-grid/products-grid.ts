@@ -7,9 +7,12 @@ import { RouterLink, RouterModule } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 import { EcommerceStore } from '../../ecommerce-store';
 import { ToggleWishlistButton } from '../../components/toggle-wishlist-button/toggle-wishlist-button';
-
+import { effect } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-products-grid',
+  standalone: true,
 
   imports: [
     ProductCard,
@@ -32,14 +35,14 @@ import { ToggleWishlistButton } from '../../components/toggle-wishlist-button/to
           <mat-nav-list>
            @for (cat of categories; track cat.value) {
   <mat-list-item
-    [activated]="cat.value === category()"
+    [activated]="cat.value === categoryValue()"
     class="my-2"
     [routerLink]="['/products', cat.value]"
   >
     <span
       matListItemTitle
       class="font-medium"
-      [class]="cat.value === category() ? '!text-white' : null"
+      [class]="cat.value === categoryValue() ? '!text-white' : null"
     >
       {{ cat.label }}
     </span>
@@ -49,7 +52,7 @@ import { ToggleWishlistButton } from '../../components/toggle-wishlist-button/to
         </div>
       </mat-sidenav>
       <mat-sidenav-content class="bg-gray100 p-6 h-full">
-        <h1 class="text-2xl font-bold text-gray-900 mb-1">{{ category() | titlecase }}</h1>
+        <h1 class="text-2xl font-bold text-gray-900 mb-1">{{ categoryValue() | titlecase }}</h1>
         <p class="text-base text-gray-600 mb-6">
           {{ store.filteredProducts().length }} products found
         </p>
@@ -73,20 +76,33 @@ import { ToggleWishlistButton } from '../../components/toggle-wishlist-button/to
   styles: ``,
 })
 export default class ProductsGrid {
-  category = input<string>('all');
+route = inject(ActivatedRoute);
 
+category = toSignal(
+  this.route.paramMap,
+  { initialValue: this.route.snapshot.paramMap }
+
+);
+
+categoryValue = computed(() =>
+  this.category()?.get('category') ?? 'all'
+);
   store = inject(EcommerceStore);
 
   categories = [
-  { value: 'all', label: 'All Products' },
-  { value: 'automation', label: 'Automation' },
-  { value: 'drives', label: 'Drives' },
-  { value: 'pumps', label: 'Pumps' },
-  { value: 'valves', label: 'Valves' },
-  { value: 'heat-exchangers', label: 'Heat Exchangers' }
-];
+    { label: 'All', value: 'all' },
+    { label: 'Automation', value: 'automation' },
+    { label: 'Drives', value: 'drives' },
+    { label: 'Pumps', value: 'pumps' },
+    { label: 'Valves', value: 'valves' },
+    { label: 'Heat Exchangers', value: 'heat-exchangers' },
+  ];
 
-  constructor() {
-    this.store.setCategory(this.category);
-  }
-}
+constructor() {
+  effect(() => {
+    const category = this.categoryValue();
+
+    this.store.setCategory(category);
+    this.store.setProductsListSeoTags(category);
+  });
+}}

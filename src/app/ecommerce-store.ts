@@ -9,7 +9,8 @@ import {
   withState,
 } from '@ngrx/signals';
 import { produce } from 'immer';
-import { Toaster } from './servises/toaster';
+import { SeoManager } from './services/seo-manager';
+import { Toaster } from './services/toaster';
 import { CartItem } from './models/cart';
 import { MatDialog } from '@angular/material/dialog';
 import { SignInDialog } from './components/sign-in-dialog/sign-in-dialog';
@@ -316,7 +317,13 @@ export const EcommerceStore = signalStore(
     selectedProduct: computed(() => products().find((p) => p.id === selectedProductId())),
   })),
   withMethods(
-    (store, toaster = inject(Toaster), matDialog = inject(MatDialog), router = inject(Router)) => ({
+    (
+      store,
+      toaster = inject(Toaster),
+      matDialog = inject(MatDialog),
+      router = inject(Router),
+      seoManager = inject(SeoManager),
+    ) => ({
       setCategory: signalMethod<string>((category: string) => {
         patchState(store, { category });
       }),
@@ -327,6 +334,18 @@ export const EcommerceStore = signalStore(
           selectedProductId: undefined,
         });
       },
+      setProductsListSeoTags: signalMethod<string | undefined>((category) => {
+        const categoryName = category ? category.charAt(0).toUpperCase() + category.slice(1) : 'All';
+        const description = category
+          ? `Browse our collection of ${category} products`
+          : 'Browse our collection of products across all categories';
+        seoManager.updateSeoTags({
+          title: categoryName,
+          description,
+        });
+      }),
+ 
+
       toggleCategories: () => {
   patchState(store, {
     categoriesOpen: !store.categoriesOpen(),
@@ -347,7 +366,16 @@ closeCategories: () => {
       setProductId: signalMethod<string>((productId: string) => {
         patchState(store, { selectedProductId: productId });
       }),
+      setProductSeoTags: signalMethod<Product|undefined>((product) => {
+        if (!product) return;
 
+        seoManager.updateSeoTags({
+          title: product.name,
+          description: product.description,
+          image: product.imageUrl,
+          type: 'product',
+        });
+      }),
       addToWishlist: (product: Product) => {
         const updatedWishlistItems = produce(store.wishlistItems(), (draft) => {
           if (!draft.find((p) => p.id === product.id)) {
@@ -528,7 +556,8 @@ closeCategories: () => {
         });
         await new Promise((resolve) => setTimeout(resolve, 1000));
         patchState(store, { loading: false, products: updatedProducts, writeReview: false });
-      },
+        toaster.success('Review added successfully');
+      }
     }),
   ),
 );
