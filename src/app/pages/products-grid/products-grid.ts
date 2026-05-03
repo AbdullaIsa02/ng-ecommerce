@@ -10,6 +10,9 @@ import { ToggleWishlistButton } from '../../components/toggle-wishlist-button/to
 import { effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Title, Meta } from '@angular/platform-browser';
+
+
 @Component({
   selector: 'app-products-grid',
   standalone: true,
@@ -97,12 +100,14 @@ categoryValue = computed(() =>
     { label: 'Valves', value: 'valves' },
     { label: 'Heat Exchangers', value: 'heat-exchangers' },
   ];
+constructor(private title: Title, private meta: Meta) {}
 
-constructor() {
-  effect(() => {
-    const category = this.categoryValue();
+ngOnInit() {
+  this.title.setTitle('Best Ecommerce Store');
 
-    this.store.setCategory(category);
-    this.store.setProductsListSeoTags(category);
+  this.meta.updateTag({
+    name: 'description',
+    content: 'Buy products online with best prices'
   });
-}}
+}
+}
